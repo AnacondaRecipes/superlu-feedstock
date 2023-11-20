@@ -27,7 +27,7 @@ requirements:
     - {{ compiler('fortran') }}
     - {{ compiler('c') }}
     - make
-    - m2-patch  # [win]
+    - patch
   host:
     - libopenblas {{ openblas }}
   run:
@@ -45,8 +45,9 @@ test:
     - test -f ${PREFIX}/include/superlu_enum_consts.h
 
 about:
-  home: http://crd-legacy.lbl.gov/~xiaoye/SuperLU/
+  home: https://portal.nersc.gov/project/sparse/superlu/
   license: BSD-3-Clause
+  license_family: BSD
   license_file: License.txt
   summary: |
     Supernodal LU: solvers for large, sparse, nonsymmetric systems of linear
@@ -55,6 +56,8 @@ about:
     SuperLU contains a set of subroutines to solve a sparse linear system A*X=B. It uses 
     Gaussian elimination with partial pivoting (GEPP). The columns of A may be preordered 
     before factorization; the preordering for sparsity is completely separate from the factorization.
+  doc_url: https://portal.nersc.gov/project/sparse/superlu/superlu_code_html/index.html
+  dev_url: https://github.com/xiaoyeli/superlu
 
 extra:
   recipe-maintainers:
