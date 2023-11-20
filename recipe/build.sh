@@ -17,8 +17,9 @@ cmake ${CMAKE_ARGS} .. \
     -Denable_complex=ON \
     -Denable_tests=ON \
     -Denable_doc=OFF \
-    -Denable_matlab_mex=OFF
+    -Denable_matlab_mex=OFF \
+    -Denable_internal_blaslib=NO
 
-make
+make -j ${CPU_COUNT}
 make test
 make install

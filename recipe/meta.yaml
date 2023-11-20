@@ -7,12 +7,19 @@ package:
   version: {{ version }}
 
 source:
-  url: https://github.com/xiaoyeli/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
+  url: https://github.com/xiaoyeli/{{ name }}/archive/v{{ version }}/{{ name }}-{{ version }}.tar.gz
   sha256: 3e464afa77335de200aeb739074a11e96d9bef6d0b519950cfa6684c4be1f350
+  patches:
+    # mc64 is under a comercial license.
+    # Patch taken from https://src.fedoraproject.org/rpms/SuperLU/raw/f38/f/superlu-removemc64.patch
+    - patches/superlu-removemc64.patch
 
 build:
   number: 0
   skip: true  # [win]
+  ignore_run_exports:
+    - libgfortran5
+    - libgfortran
 
 requirements:
   build:
@@ -20,10 +27,11 @@ requirements:
     - {{ compiler('fortran') }}
     - {{ compiler('c') }}
     - make
+    - m2-patch  # [win]
   host:
-    - openblas {{ openblas }} 
+    - libopenblas {{ openblas }}
   run:
-    - libopenblas 
+    - libopenblas
 
 test:
   commands:
