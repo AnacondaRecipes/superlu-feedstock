@@ -16,7 +16,8 @@ source:
 
 build:
   number: 0
-  skip: true  # [win]
+  # Skip MKL (osx-64) and Windows.
+  skip: True  # [(blas_impl != 'openblas' or win)]
   ignore_run_exports:
     - libgfortran5
     - libgfortran
@@ -29,9 +30,10 @@ requirements:
     - make
     - patch
   host:
-    - libopenblas {{ openblas }}
+    - openblas-devel {{ openblas }}  # [blas_impl == 'openblas']
   run:
-    - libopenblas
+    # # through run_exports of libopenblas-devel
+    - libopenblas  # [blas_impl == 'openblas']
 
 test:
   commands:
