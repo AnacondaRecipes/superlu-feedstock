@@ -9,6 +9,7 @@ cmake ${CMAKE_ARGS} .. \
     -DCMAKE_INSTALL_PREFIX="${PREFIX}" \
     -DCMAKE_INSTALL_LIBDIR="${PREFIX}/lib" \
     -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fPIC" \
+    -DBUILD_SHARED_LIBS=ON \
     -Denable_blaslib=OFF \
     -Denable_single=ON \
     -Denable_double=ON \
@@ -16,10 +17,9 @@ cmake ${CMAKE_ARGS} .. \
     -Denable_complex=ON \
     -Denable_tests=ON \
     -Denable_doc=OFF \
-    -Denable_matlab_mex=OFF
+    -Denable_matlab_mex=OFF \
+    -Denable_internal_blaslib=NO
 
-make
-if [[ "${CONDA_BUILD_CROSS_COMPILATION}" != "1" ]]; then
+make -j ${CPU_COUNT}
 make test
-fi
 make install

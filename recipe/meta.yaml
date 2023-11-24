@@ -1,19 +1,26 @@
-{% set version = "5.2.2" %}
+{% set name = "superlu" %}
+{% set version = "5.3.0" %}
 
 
 package:
-  name: superlu
+  name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  fn: superlu-{{ version }}.tar.gz
-  url: http://crd-legacy.lbl.gov/~xiaoye/SuperLU/superlu_{{ version }}.tar.gz
-  sha256: 470334a72ba637578e34057f46948495e601a5988a602604f5576367e606a28c
+  url: https://github.com/xiaoyeli/{{ name }}/archive/v{{ version }}/{{ name }}-{{ version }}.tar.gz
+  sha256: 3e464afa77335de200aeb739074a11e96d9bef6d0b519950cfa6684c4be1f350
+  patches:
+    # mc64 is under a comercial license.
+    # Patch taken from https://src.fedoraproject.org/rpms/SuperLU/raw/f38/f/superlu-removemc64.patch
+    - patches/superlu-removemc64.patch
 
 build:
   number: 0
-  skip: true  # [win]
-  features:
+  # Skip MKL (osx-64) and Windows.
+  skip: True  # [(blas_impl != 'openblas' or win)]
+  ignore_run_exports:
+    - libgfortran5
+    - libgfortran
 
 requirements:
   build:
@@ -21,23 +28,40 @@ requirements:
     - {{ compiler('fortran') }}
     - {{ compiler('c') }}
     - make
+    - patch
   host:
-    - libblas
-    - libcblas
+    - openblas-devel {{ openblas }}  # [blas_impl == 'openblas']
   run:
+    # # through run_exports of libopenblas-devel
+    - libopenblas  # [blas_impl == 'openblas']
 
 test:
   commands:
-    - test -f ${PREFIX}/lib/libsuperlu.a
+    - test -f ${PREFIX}/lib/libsuperlu${SHLIB_EXT}
+    - test -f ${PREFIX}/include/slu_ddefs.h
+    - test -f ${PREFIX}/include/slu_sdefs.h
+    - test -f ${PREFIX}/include/slu_zdefs.h
+    - test -f ${PREFIX}/include/slu_dcomplex.h
+    - test -f ${PREFIX}/include/slu_scomplex.h
+    - test -f ${PREFIX}/include/slu_util.h
+    - test -f ${PREFIX}/include/superlu_enum_consts.h
 
 about:
-  home: http://crd-legacy.lbl.gov/~xiaoye/SuperLU/
+  home: https://portal.nersc.gov/project/sparse/superlu/
   license: BSD-3-Clause
+  license_family: BSD
   license_file: License.txt
   summary: |
     Supernodal LU: solvers for large, sparse, nonsymmetric systems of linear
     equations.
+  description: | 
+    SuperLU contains a set of subroutines to solve a sparse linear system A*X=B. It uses 
+    Gaussian elimination with partial pivoting (GEPP). The columns of A may be preordered 
+    before factorization; the preordering for sparsity is completely separate from the factorization.
+  doc_url: https://portal.nersc.gov/project/sparse/superlu/superlu_code_html/index.html
+  dev_url: https://github.com/xiaoyeli/superlu
 
 extra:
   recipe-maintainers:
     - grlee77
+    - MWaszkiewicz-Anaconda
