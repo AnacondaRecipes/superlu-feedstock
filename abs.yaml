@@ -1,2 +1,8 @@
+build_parameters:
+  - "--suppress-variables"
+  - "--skip-existing"
+  # Remove due to libgomp beng linked when using MKL.
+  # - "--error-overlinking"
+
 upload_channels:
   - sfe1ed40
