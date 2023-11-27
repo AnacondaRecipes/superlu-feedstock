@@ -15,9 +15,8 @@ source:
     - patches/superlu-removemc64.patch
 
 build:
-  number: 0
-  # Skip MKL (osx-64) and Windows.
-  skip: True  # [(blas_impl != 'openblas' or win)]
+  number: 1
+  skip: True  # [win]
   ignore_run_exports:
     - libgfortran5
     - libgfortran
@@ -31,9 +30,11 @@ requirements:
     - patch
   host:
     - openblas-devel {{ openblas }}  # [blas_impl == 'openblas']
+    - mkl-devel {{ mkl }}  # [blas_impl == 'mkl']
   run:
-    # # through run_exports of libopenblas-devel
+    # through run_exports of libopenblas-devel
     - libopenblas  # [blas_impl == 'openblas']
+    - mkl {{ mkl }}  # [blas_impl == 'mkl']
 
 test:
   commands:
